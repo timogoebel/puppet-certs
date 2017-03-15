@@ -11,7 +11,6 @@ class certs::qpid (
   Exec { logoutput => 'on_failure' }
 
   $qpid_cert_name = "${certs::qpid::hostname}-qpid-broker"
-  $nss_db_password_file = $::certs::ssltools::create_nssdb::nss_db_password_file
 
   cert { $qpid_cert_name:
     ensure        => present,
@@ -32,6 +31,7 @@ class certs::qpid (
 
   if $deploy {
     include ::certs::ssltools::create_nssdb
+    $nss_db_password_file = $::certs::ssltools::create_nssdb::nss_db_password_file
 
     $client_cert            = "${certs::pki_dir}/certs/${qpid_cert_name}.crt"
     $client_key             = "${certs::pki_dir}/private/${qpid_cert_name}.key"
