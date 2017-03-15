@@ -22,7 +22,7 @@ class certs::qpid (
     org           => 'pulp',
     org_unit      => $::certs::org_unit,
     expiration    => $::certs::expiration,
-    ca            => Ca[$server_ca_name],
+    ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,
