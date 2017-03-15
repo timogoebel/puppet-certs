@@ -1,6 +1,5 @@
 # Constains certs specific configurations for candlepin
 class certs::candlepin (
-
   $hostname               = $::certs::node_fqdn,
   $cname                  = $::certs::cname,
   $generate               = $::certs::generate,
@@ -8,14 +7,14 @@ class certs::candlepin (
   $deploy                 = $::certs::deploy,
   $ca_cert                = $::certs::ca_cert_stripped,
   $ca_key                 = $::certs::ca_key,
-  $pki_dir                = $::certs::params::pki_dir,
-  $keystore               = $::certs::params::candlepin_keystore,
-  $keystore_password_file = $::certs::params::keystore_password_file,
-  $amqp_truststore        = $::certs::params::candlepin_amqp_truststore,
-  $amqp_keystore          = $::certs::params::candlepin_amqp_keystore,
-  $amqp_store_dir         = $::certs::params::candlepin_amqp_store_dir,
-  $tomcat                 = $::certs::params::tomcat,
-  ) inherits certs::params {
+  $pki_dir                = $::certs::pki_dir,
+  $keystore               = $::certs::candlepin_keystore,
+  $keystore_password_file = $::certs::keystore_password_file,
+  $amqp_truststore        = $::certs::candlepin_amqp_truststore,
+  $amqp_keystore          = $::certs::candlepin_amqp_keystore,
+  $amqp_store_dir         = $::certs::candlepin_amqp_store_dir,
+  $tomcat                 = $::certs::tomcat,
+  ) inherits certs {
 
   Exec {
     logoutput => 'on_failure',
@@ -34,11 +33,11 @@ class certs::candlepin (
     org           => 'candlepin',
     org_unit      => $::certs::org_unit,
     expiration    => $::certs::expiration,
-    ca            => $::certs::default_ca,
+    ca            => Ca[$server_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,
-    password_file => $certs::ca_key_password_file,
+    password_file => $::certs::ca_key_password_file,
   }
 
   $keystore_password = cache_data('foreman_cache_data', $keystore_password_file, random_password(32))
@@ -48,6 +47,7 @@ class certs::candlepin (
   $client_key = "${certs::pki_dir}/private/${java_client_cert_name}.key"
 
   if $deploy {
+    include ::certs::ssltools::create_nssdb
 
     file { $password_file:
       ensure  => file,
@@ -80,7 +80,7 @@ class certs::candlepin (
       client_cert => $client_cert,
       refreshonly => true,
       subscribe   => Exec['create-nss-db'],
-      notify      => Service['qpidd'],
+      #notify      => Service['qpidd'],
     } ~>
     file { $amqp_store_dir:
       ensure => directory,
@@ -88,10 +88,10 @@ class certs::candlepin (
       group  => $::certs::group,
       mode   => '0750',
     } ~>
-    exec { 'create candlepin qpid exchange':
+    exec { 'create candlepin qpid exchange': # TODO: certs is the wrong module!
       command => "qpid-config --ssl-certificate ${client_cert} --ssl-key ${client_key} -b 'amqps://localhost:5671' add exchange topic ${certs::candlepin_qpid_exchange} --durable",
       unless  => "qpid-config --ssl-certificate ${client_cert} --ssl-key ${client_key} -b 'amqps://localhost:5671' exchanges ${certs::candlepin_qpid_exchange}",
-      require => Service['qpidd'],
+      #require => Service['qpidd'], # TODO: Test the connection
     } ~>
     exec { 'import CA into Candlepin truststore':
       command => "keytool -import -v -keystore ${amqp_truststore} -storepass ${keystore_password} -alias ${certs::default_ca_name} -file ${ca_cert} -noprompt",

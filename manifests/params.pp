@@ -94,4 +94,6 @@ class certs::params {
 
   $qpidd_group = 'qpidd'
 
+  $manage_ca = true
+
 }
