@@ -11,6 +11,7 @@ class certs::qpid (
   Exec { logoutput => 'on_failure' }
 
   $qpid_cert_name = "${certs::qpid::hostname}-qpid-broker"
+  $nss_db_password_file = $::certs::ssltools::create_nssdb::nss_db_password_file
 
   cert { $qpid_cert_name:
     ensure        => present,
@@ -63,12 +64,12 @@ class certs::qpid (
       refreshonly => true,
     } ~>
     exec { 'generate-pfx-for-nss-db':
-      command     => "openssl pkcs12 -in ${client_cert} -inkey ${client_key} -export -out '${pfx_path}' -password 'file:${::certs::ssltools::create_nssdb::nss_db_password_file}'",
+      command     => "openssl pkcs12 -in ${client_cert} -inkey ${client_key} -export -out '${pfx_path}' -password 'file:${nss_db_password_file}'",
       path        => '/usr/bin',
       refreshonly => true,
     } ~>
     exec { 'add-private-key-to-nss-db':
-      command     => "pk12util -i '${pfx_path}' -d '${::certs::nss_db_dir}' -w '${::certs::ssltools::create_nssdb::nss_db_password_file}' -k '${::certs::ssltools::create_nssdb::nss_db_password_file}'",
+      command     => "pk12util -i '${pfx_path}' -d '${::certs::nss_db_dir}' -w '${nss_db_password_file}' -k '${nss_db_password_file}'",
       path        => '/usr/bin',
       refreshonly => true,
     } ~>
