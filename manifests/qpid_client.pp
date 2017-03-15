@@ -9,7 +9,7 @@ class certs::qpid_client (
 
   $messaging_client_cert = $certs::params::messaging_client_cert
 
-  ) {
+) inherits certs {
 
   cert { "${hostname}-qpid-client-cert":
     hostname      => $hostname,
@@ -22,11 +22,11 @@ class certs::qpid_client (
     org           => 'PULP',
     org_unit      => $::certs::org_unit,
     expiration    => $::certs::expiration,
-    ca            => $::certs::default_ca,
+    ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,
-    password_file => $certs::ca_key_password_file,
+    password_file => $::certs::ca_key_password_file,
   }
 
   if $deploy {
