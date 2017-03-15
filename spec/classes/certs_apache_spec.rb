@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'certs::qpid_client' do
+describe 'certs::apache' do
   let :facts do
     on_supported_os['redhat-7-x86_64']
   end

@@ -1,12 +1,11 @@
 # Certs configurations for Apache
 class certs::apache (
-
   $hostname        = $::certs::node_fqdn,
   $cname           = $::certs::cname,
   $generate        = $::certs::generate,
   $regenerate      = $::certs::regenerate,
   $deploy          = $::certs::deploy,
-  ) inherits certs::params {
+) inherits certs {
 
   $apache_cert_name = "${hostname}-apache"
   $apache_cert = "${certs::pki_dir}/certs/katello-apache.crt"
@@ -35,7 +34,7 @@ class certs::apache (
       org           => $::certs::org,
       org_unit      => $::certs::org_unit,
       expiration    => $::certs::expiration,
-      ca            => $::certs::default_ca,
+      ca            => Ca[$default_ca_name],
       generate      => $generate,
       regenerate    => $regenerate,
       deploy        => $deploy,

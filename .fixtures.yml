@@ -8,5 +8,6 @@ fixtures:
     common:            "https://github.com/katello/puppet-common.git"
     trusted_ca:        "https://github.com/evenup/evenup-trusted_ca.git"
     concat:            "https://github.com/puppetlabs/puppetlabs-concat"
+    apache:            "https://github.com/puppetlabs/puppetlabs-apache"
   symlinks:
     certs: "#{source_dir}"
