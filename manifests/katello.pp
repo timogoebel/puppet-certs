@@ -5,7 +5,7 @@ class certs::katello (
   $rhsm_port                     = 443,
   $candlepin_cert_rpm_alias_filename = undef,
   $server_ca_name                = $::certs::server_ca_name,
-  ){
+) inherits certs {
 
   $candlepin_cert_rpm_alias = $candlepin_cert_rpm_alias_filename ? {
     undef   => 'katello-ca-consumer-latest.noarch.rpm',
