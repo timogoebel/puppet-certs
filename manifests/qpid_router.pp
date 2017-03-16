@@ -43,6 +43,7 @@ class certs::qpid_router (
     city          => $::certs::city,
     org           => 'dispatch client',
     org_unit      => $::certs::org_unit,
+    expiration    => $::certs::expiration,
     ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
