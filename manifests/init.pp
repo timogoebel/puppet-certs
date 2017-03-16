@@ -91,9 +91,6 @@
 #
 # $server_ca_name::       The name of the server CA (used for https)
 #                         type:String
-#
-# $manage_ca::            Manage the default CA
-#                         type:Boolean
 class certs (
   $log_dir         = $::certs::params::log_dir,
   $node_fqdn       = $::certs::params::node_fqdn,
@@ -125,8 +122,6 @@ class certs (
 
   $default_ca_name = $::certs::params::default_ca_name,
   $server_ca_name  = $::certs::params::server_ca_name,
-
-  $manage_ca       = $::certs::params::manage_ca,
 ) inherits certs::params {
 
   if $server_cert {
@@ -150,10 +145,5 @@ class certs (
 
 
   class { '::certs::install': } ->
-  class { '::certs::config': }
-
-  if $manage_ca {
-    Class['::certs::config'] ->
-      class { '::certs::ca': }
-  }
-}
+  class { '::certs::config': } ->
+  class { '::certs::ca': }
