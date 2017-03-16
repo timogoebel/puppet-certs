@@ -9,5 +9,6 @@ fixtures:
     trusted_ca:        "https://github.com/evenup/evenup-trusted_ca.git"
     concat:            "https://github.com/puppetlabs/puppetlabs-concat"
     apache:            "https://github.com/puppetlabs/puppetlabs-apache"
+    puppet:            "https://github.com/theforeman/puppet-puppet"
   symlinks:
     certs: "#{source_dir}"

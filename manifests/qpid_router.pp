@@ -1,5 +1,5 @@
 # Constains certs specific configurations for qpid dispatch router
-class certs::qpid_router(
+class certs::qpid_router (
   $hostname               = $::certs::node_fqdn,
   $cname                  = $::certs::cname,
   $generate               = $::certs::generate,
@@ -11,7 +11,7 @@ class certs::qpid_router(
   $client_key             = $::certs::qpid_router_client_key,
   $owner                  = $::certs::qpid_router_owner,
   $group                  = $::certs::qpid_router_group,
-) inherits certs::params {
+) inherits certs {
 
   $server_keypair = "${hostname}-qpid-router-server"
   $client_keypair = "${hostname}-qpid-router-client"
@@ -26,7 +26,7 @@ class certs::qpid_router(
     org           => 'dispatch server',
     org_unit      => $::certs::org_unit,
     expiration    => $::certs::expiration,
-    ca            => $::certs::default_ca,
+    ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,
@@ -43,8 +43,7 @@ class certs::qpid_router(
     city          => $::certs::city,
     org           => 'dispatch client',
     org_unit      => $::certs::org_unit,
-    expiration    => $::certs::expiration,
-    ca            => $::certs::default_ca,
+    ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,

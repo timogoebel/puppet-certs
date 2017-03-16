@@ -25,7 +25,7 @@ class certs::foreman (
     org           => 'FOREMAN',
     org_unit      => 'PUPPET',
     expiration    => $::certs::expiration,
-    ca            => $::certs::default_ca,
+    ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,
@@ -42,7 +42,7 @@ class certs::foreman (
       key_pair => Cert[$client_cert_name],
     } ->
     pubkey { $ssl_ca_cert:
-      key_pair => $::certs::server_ca,
+      key_pair => Ca[$default_ca_name],
     } ~>
     file { $client_key:
       ensure => file,

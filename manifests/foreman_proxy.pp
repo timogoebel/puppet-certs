@@ -13,7 +13,7 @@ class certs::foreman_proxy (
   $foreman_ssl_key     = $::certs::params::foreman_proxy_foreman_ssl_key,
   $foreman_ssl_ca_cert = $::certs::params::foreman_proxy_foreman_ssl_ca_cert
 
-  ) inherits certs::params {
+) inherits certs {
 
   $proxy_cert_name = "${::certs::foreman_proxy::hostname}-foreman-proxy"
   $foreman_proxy_client_cert_name = "${::certs::foreman_proxy::hostname}-foreman-proxy-client"
@@ -43,7 +43,7 @@ class certs::foreman_proxy (
       org           => 'FOREMAN',
       org_unit      => 'SMART_PROXY',
       expiration    => $::certs::expiration,
-      ca            => $::certs::default_ca,
+      ca            => Ca[$default_ca_name],
       generate      => $generate,
       regenerate    => $regenerate,
       deploy        => $deploy,
@@ -62,7 +62,7 @@ class certs::foreman_proxy (
     org           => 'FOREMAN',
     org_unit      => 'FOREMAN_PROXY',
     expiration    => $::certs::expiration,
-    ca            => $::certs::default_ca,
+    ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,
@@ -81,7 +81,7 @@ class certs::foreman_proxy (
       notify   => Service['foreman-proxy'],
     } ->
     pubkey { $proxy_ca_cert:
-      key_pair => $certs::default_ca,
+      key_pair => Ca[$default_ca_name],
       notify   => Service['foreman-proxy'],
     } ~>
     file { $proxy_key:
@@ -100,7 +100,7 @@ class certs::foreman_proxy (
       key_pair => Cert[$foreman_proxy_client_cert_name],
     } ->
     pubkey { $foreman_ssl_ca_cert:
-      key_pair => $::certs::server_ca,
+      key_pair => Ca[$default_ca_name],
     } ~>
     key_bundle { $foreman_proxy_ssl_client_bundle:
       key_pair => Cert[$foreman_proxy_client_cert_name],

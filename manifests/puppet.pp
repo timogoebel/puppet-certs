@@ -11,7 +11,7 @@ class certs::puppet (
   $client_key  = $::certs::params::puppet_client_key,
   $ssl_ca_cert = $::certs::params::puppet_ssl_ca_cert
 
-  ) inherits certs::params {
+) inherits certs {
 
   $puppet_client_cert_name = "${::certs::puppet::hostname}-puppet-client"
 
@@ -26,7 +26,7 @@ class certs::puppet (
     org           => 'FOREMAN',
     org_unit      => 'PUPPET',
     expiration    => $::certs::expiration,
-    ca            => $::certs::default_ca,
+    ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,
@@ -48,7 +48,7 @@ class certs::puppet (
       key_pair => Cert[$puppet_client_cert_name],
     } ->
     pubkey { $ssl_ca_cert:
-      key_pair => $::certs::server_ca,
+      key_pair => Ca[$default_ca_name],
     } ~>
     file { [$client_cert, $client_key, $ssl_ca_cert]:
       ensure => file,

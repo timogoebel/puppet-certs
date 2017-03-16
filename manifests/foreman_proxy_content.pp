@@ -20,7 +20,7 @@ class certs::foreman_proxy_content (
   $foreman_proxy_fqdn   = $certs::params::node_fqdn,
   $foreman_proxy_cname  = $certs::params::cname,
   $certs_tar            = $certs::params::certs_tar
-  ) inherits certs::params {
+) inherits certs {
 
   # until we support again pushing the cert rpms to the Katello,
   # make sure the certs_tar path is present

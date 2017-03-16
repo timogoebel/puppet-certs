@@ -6,7 +6,7 @@ class certs::pulp_client (
   $regenerate  = $::certs::regenerate,
   $deploy      = $::certs::deploy,
   $common_name = 'admin',
-  ){
+) inherits certs {
 
   $client_cert_name = 'pulp-client'
   $client_cert      = "${::certs::pki_dir}/certs/${client_cert_name}.crt"
@@ -24,7 +24,7 @@ class certs::pulp_client (
     org           => 'PULP',
     org_unit      => 'NODES',
     expiration    => $::certs::expiration,
-    ca            => $::certs::default_ca,
+    ca            => Ca[$default_ca_name],
     generate      => $generate,
     regenerate    => $regenerate,
     deploy        => $deploy,
